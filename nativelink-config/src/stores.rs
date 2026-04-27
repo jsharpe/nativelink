@@ -1237,6 +1237,22 @@ pub struct GrpcSpec {
     /// context (`traceparent` / `tracestate`) into every outgoing request.
     #[serde(default)]
     pub forward_headers: Vec<String>,
+
+    /// Use legacy ByteStream resource name format, omitting the digest
+    /// function component from the path.
+    ///
+    /// Modern NativeLink generates resource names like:
+    ///   `{instance}/blobs/{digest_function}/{hash}/{size}`
+    ///
+    /// Older backends (e.g. Buildbarn pre-v0.3) expect the original format:
+    ///   `{instance}/blobs/{hash}/{size}`
+    ///
+    /// Set this to `true` when connecting to such backends to avoid
+    /// `InvalidArgument: Unsupported digest function` errors.
+    ///
+    /// Default: false
+    #[serde(default)]
+    pub use_legacy_resource_names: bool,
 }
 
 /// The possible error codes that might occur on an upstream request.
