@@ -13,6 +13,7 @@
 // limitations under the License.
 
 use core::time::Duration;
+use std::collections::HashMap;
 use std::sync::Arc;
 
 use rand::Rng;
@@ -1218,6 +1219,24 @@ pub struct GrpcSpec {
     /// Default: 0 (disabled)
     #[serde(default, deserialize_with = "convert_duration_with_shellexpand")]
     pub rpc_timeout_s: u64,
+
+    /// Static headers to attach to every outgoing gRPC request sent to this
+    /// store's upstream endpoints. Useful for fixed authentication tokens
+    /// (e.g. `{"authorization": "Bearer <token>"}`) and other static metadata.
+    #[serde(default)]
+    pub headers: HashMap<String, String>,
+
+    /// Header names to forward from the incoming client request to every
+    /// outgoing upstream request. The header value is taken from the client
+    /// request that triggered this store operation. Use this to pass through
+    /// dynamic credentials such as JWT tokens sent by build clients.
+    ///
+    /// Example: `["authorization", "x-custom-token"]`
+    ///
+    /// NativeLink also automatically injects the current OpenTelemetry trace
+    /// context (`traceparent` / `tracestate`) into every outgoing request.
+    #[serde(default)]
+    pub forward_headers: Vec<String>,
 }
 
 /// The possible error codes that might occur on an upstream request.

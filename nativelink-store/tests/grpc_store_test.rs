@@ -1,6 +1,7 @@
 use core::time::Duration;
 
 use nativelink_config::stores::{GrpcEndpoint, GrpcSpec, Retry, StoreType};
+use std::collections::HashMap;
 use nativelink_error::Error;
 use nativelink_macro::nativelink_test;
 use nativelink_proto::build::bazel::remote::execution::v2::{
@@ -28,6 +29,8 @@ async fn fast_find_missing_blobs() -> Result<(), Error> {
         max_concurrent_requests: 0,
         connections_per_endpoint: 0,
         rpc_timeout_s: 1,
+        headers: HashMap::new(),
+        forward_headers: vec![],
     };
     let store = GrpcStore::new(&spec).await?;
     let request = Request::new(FindMissingBlobsRequest {
